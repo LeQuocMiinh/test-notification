@@ -1,0 +1,23 @@
+{
+  "name": "hono-boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "hello": "pnpm --filter @app/hello",
+    "common": "pnpm --filter @packages/common",
+    "mongodb-connector": "pnpm --filter @packages/mongodb-connector",
+    "redis-connector": "pnpm --filter @packages/redis-connector",
+    "elastic-search": "pnpm --filter @packages/elastic-search",
+    "build:elastic-search": "pnpm run elastic-search build",
+    "build:redis-connector": "pnpm run redis-connector build",
+    "build:mongodb-connector": "pnpm run mongodb-connector build",
+    "build:common": "pnpm run common build",
+    "example": "pnpm --filter @apps/example",
+    "dev:example": "pnpm run example dev",
+    "packages:build": "pnpm run build:common && pnpm run build:mongodb-connector && pnpm run build:redis-connector && pnpm run build:elastic-search"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

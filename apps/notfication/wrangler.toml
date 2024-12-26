@@ -1,0 +1,12 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "notfication"
+main = "src/main.ts"
+compatibility_date = "2024-12-24"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "notifcation"
+database_id = "43a58995-a2c8-4386-9dce-b531f23c2cc6"
+
+
