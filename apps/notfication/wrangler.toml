@@ -9,4 +9,9 @@ binding = "DB"
 database_name = "notifcation"
 database_id = "43a58995-a2c8-4386-9dce-b531f23c2cc6"
 
+[site]
+bucket = "./"
+include = ["**/*.yaml"]
 
+[observability.logs]
+enabled = true

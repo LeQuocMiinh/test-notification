@@ -1,10 +1,11 @@
 import { getOrThrow, logger, setupConfiguration } from '@packages/common';
 import * as apns from 'apn';
 import { Context } from 'hono';
+import { yamlContentConfig } from '../../utils/yaml-config';
 
 export async function sendNotificationApns(c: Context) {
-    const options: any = getOrThrow("apns.options");
-    const bundleId = getOrThrow("apns.bundleId");
+    const options: any = yamlContentConfig.apns.options;
+    const bundleId = yamlContentConfig.apns.bundleId;
     const { message, deviceToken } = await c.req.json();
 
     const apnsConnection = new apns.Provider(options);
