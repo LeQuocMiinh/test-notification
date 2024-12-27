@@ -1,15 +1,9 @@
 import { FcmMessage } from 'fcm-cloudflare-workers';
 import { Context } from 'hono';
-import admin from 'firebase-admin';
-import { getOrThrow, logger } from '@packages/common';
+import { logger } from '@packages/common';
 import { yamlContentConfig } from '../../utils/yaml-config';
 import { FcmErrorResponse, FcmTokenResponse } from '../../store/entity/fcm-responses';
 import { createJWT } from '../../utils/create-jwt';
-import { FcmOptions } from '../../store/entity/fcm-options';
-
-const app = admin.initializeApp({
-    credential: admin.credential.cert(yamlContentConfig.fcm.serviceAccount)
-});
 
 const serviceAccount = yamlContentConfig.fcm.serviceAccount;
 const fcmHost: string = "https://fcm.googleapis.com";
@@ -34,7 +28,6 @@ async function getAccessToken(): Promise<string> {
         throw new Error("Service account is not defined.");
     }
 
-    // Generate a new JWT
     const now = Math.floor(Date.now() / 1000);
     const ttl = 3600; // 1 hour
     const payload = {
@@ -157,11 +150,6 @@ async function processBatch(
     return unregisteredTokens;
 }
 
-/**
- * @deprecated This is an internal method that will be removed in a future version.
- * Use sendToToken, sendToTokens, sendToTopic, or sendToCondition instead.
- * @internal
- */
 async function sendRequest(
     device: string,
     message: any,
