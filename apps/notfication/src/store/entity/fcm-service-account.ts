@@ -1,6 +1,3 @@
-/**
- * Interface to represent the "service-account.json" file.
- */
 export interface FcmServiceAccount {
     type: string;
     project_id: string;

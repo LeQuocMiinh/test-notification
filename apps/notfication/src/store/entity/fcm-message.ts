@@ -1,6 +1,3 @@
-/**
- * Interface to represent the push notification message.
- */
 export interface FcmMessage {
     notification: {
         title: string;
