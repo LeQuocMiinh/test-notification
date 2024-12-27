@@ -5,11 +5,10 @@ import { sendNotificationApns } from "../api/notification/noti-apns.service";
 import { subcribe } from "../api/subscription/subscription.service";
 
 export function routes(app: IHonoEnv) {
-    app.post('/hello', helloService);
+    app.get('/hello', helloService);
 
     app.post('/notification-fcm', sendToNotification);
 
     app.post('/notification-apns', sendNotificationApns);
 
-    app.post('/subscribe', subcribe);
 }
