@@ -12,9 +12,12 @@ export async function sendToNotification(c: Context) {
     const { data, deviceToken } = await c.req.json();
 
     try {
-        const unregisteredTokens = sendMulticast(data, [deviceToken]);
+        const unregisteredTokens = await sendMulticast(data, [deviceToken]);
         logger.info("Message sent successfully");
 
+        if (unregisteredTokens.length > 0) {
+            logger.info("Unregistered device token(s): ", unregisteredTokens.join(", "));
+        }
     } catch (error) {
         console.error(error);
         return c.json({ success: false, message: "Sending Failed" }, 400);
