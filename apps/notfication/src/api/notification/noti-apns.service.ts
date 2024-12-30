@@ -1,38 +1,95 @@
-import { logger } from '@packages/common';
-import * as apns from 'apn';
-import { Context } from 'hono';
-import { yamlContentConfig } from '../../utils/yaml-config';
+import { Context } from "hono";
+import { yamlContentConfig } from "../../utils/yaml-config";
+
+const apnService = yamlContentConfig.apns;
+
+const PRIVATE_KEY = apnService.options.token.key;
+const KEY_ID = apnService.options.token.keyId;
+const TEAM_ID = apnService.options.token.teamId;
+const BUNDLE_ID = apnService.bundleId;
+const PRODUCTION_URL = "https://api.sandbox.push.apple.com";
 
 export async function sendNotificationApns(c: Context) {
-    const options: any = yamlContentConfig.apns.options;
-    const bundleId = yamlContentConfig.apns.bundleId;
-    const { message, deviceToken } = await c.req.json();
-
-    const apnsConnection = new apns.Provider(options);
-
-    const note = new apns.Notification(
-        {
-            alert: message,
-            badge: 1,
-            sound: "default",
-            topic: bundleId,
-        }
-    );
-
     try {
-        const result = await apnsConnection.send(note, deviceToken);
+        const { deviceToken, notification, data } = await c.req.json();
+        const jwt = await generateJWT(PRIVATE_KEY, KEY_ID, TEAM_ID);
 
-        if (result.failed.length > 0) {
-            console.error('Notification failed:', result.failed);
-            return c.text('Failed to send notification', 500);
+        const payload = JSON.stringify({
+            aps: {
+                alert: notification,
+                badge: 1,
+                sound: "default",
+            },
+            data: data || {},
+        });
+
+        const headers = {
+            'Authorization': `Bearer ${jwt}`,
+            'Content-Type': 'application/json',
+            'apns-topic': BUNDLE_ID,
+            'apns-push-type': 'alert', // Required for iOS 13+
+            'apns-expiration': '0',
+            'apns-priority': '10',
+        };
+
+        const response = await fetch(`${PRODUCTION_URL}/3/device/${deviceToken}`, {
+            method: 'POST',
+            headers,
+            body: payload,
+        });
+
+        const responseText = await response.text();
+
+        if (!response.ok) {
+            throw new Error(`APNs error: ${response.status} - ${responseText}`);
         }
 
-        logger.info('Notification sent successfully:', result.sent);
-        return c.text('Send notification', 200);
-    } catch (error) {
-        console.error('Error sending notification:', error);
-        return c.text('Failed to send notification', 500);
-    } finally {
-        apnsConnection.shutdown();
+        return c.json({ status: true, message: "Notification sent successfully", data: responseText });
+    } catch (error: any) {
+        console.error("Failed to send notification:", error.message);
+        return c.json({ success: false, error: error.message }, 500);
     }
 }
+
+
+async function generateJWT(privateKey: string, keyId: string, teamId: string) {
+    const header = { alg: "ES256", kid: keyId };
+    const claims = {
+        iss: teamId,
+        iat: Math.floor(Date.now() / 1000),
+    };
+
+    const encoder = new TextEncoder();
+    const headerBase64 = btoa(JSON.stringify(header));
+    const claimsBase64 = btoa(JSON.stringify(claims));
+    const unsignedToken = `${headerBase64}.${claimsBase64}`;
+
+    const key = await crypto.subtle.importKey(
+        "pkcs8",
+        pemToArrayBuffer(privateKey),
+        { name: "ECDSA", namedCurve: "P-256" },
+        false,
+        ["sign"]
+    );
+
+    const signature = await crypto.subtle.sign(
+        { name: "ECDSA", hash: { name: "SHA-256" } },
+        key,
+        encoder.encode(unsignedToken)
+    );
+
+    const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
+    return `${unsignedToken}.${signatureBase64}`;
+}
+
+export function pemToArrayBuffer(pem: string) {
+    const base64 = pem.replace(/-----.*?-----/g, "").replace(/\s/g, "");
+    const binary = atob(base64);
+    const arrayBuffer = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        arrayBuffer[i] = binary.charCodeAt(i);
+    }
+    return arrayBuffer.buffer;
+}
+
+

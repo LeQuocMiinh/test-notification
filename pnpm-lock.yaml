@@ -43,6 +43,9 @@ importers:
       hono:
         specifier: ^4.5.2
         version: 4.6.14
+      http2:
+        specifier: ^3.3.7
+        version: 3.3.7
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
@@ -2548,6 +2551,11 @@ packages:
   http-proxy-agent@5.0.0:
     resolution: {integrity: sha512-n2hY8YdoRE1i7r6M0w9DIw5GgZN0G25P8zLCRQ8rjXtTU3vsNFBI/vWK/UIeE6g5MUUz6avwAPXmL6Fy9D/90w==}
     engines: {node: '>= 6'}
+
+  http2@3.3.7:
+    resolution: {integrity: sha512-puSi8M8WNlFJm9Pk4c/Mbz9Gwparuj3gO9/RRO5zv6piQ0FY+9Qywp0PdWshYgsMJSalixFY7eC6oPu0zRxLAQ==}
+    engines: {node: '>=0.12.0 <9.0.0'}
+    deprecated: Use the built-in module in node 9.0.0 or newer, instead
 
   http2@https://github.com/node-apn/node-http2/archive/apn-2.1.4.tar.gz:
     resolution: {tarball: https://github.com/node-apn/node-http2/archive/apn-2.1.4.tar.gz}
@@ -6478,6 +6486,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
     optional: true
+
+  http2@3.3.7: {}
 
   http2@https://github.com/node-apn/node-http2/archive/apn-2.1.4.tar.gz: {}
 
