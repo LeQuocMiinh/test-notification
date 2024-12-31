@@ -1,4 +1,4 @@
-function pemToArrayBuffer(pem: string): ArrayBuffer {
+export function pemToArrayBufferForFCM(pem: string): ArrayBuffer {
     const pemHeader = "-----BEGIN PRIVATE KEY-----";
     const pemFooter = "-----END PRIVATE KEY-----";
     const pemContents = pem
@@ -18,7 +18,7 @@ function pemToArrayBuffer(pem: string): ArrayBuffer {
 }
 
 async function importPrivateKey(pem: string): Promise<CryptoKey> {
-    const keyBuffer = pemToArrayBuffer(pem);
+    const keyBuffer = pemToArrayBufferForFCM(pem);
 
     return await crypto.subtle.importKey(
         "pkcs8",
@@ -32,7 +32,7 @@ async function importPrivateKey(pem: string): Promise<CryptoKey> {
     );
 }
 
-async function createJWT(payload: any, privateKey: string): Promise<string> {
+async function createJwtForFCM(payload: any, privateKey: string): Promise<string> {
     const encoder = new TextEncoder();
 
     const encodeBase64Url = (data: string): string => {
@@ -73,4 +73,4 @@ async function createJWT(payload: any, privateKey: string): Promise<string> {
     return `${unsignedToken}.${signatureBase64Url}`;
 }
 
-export { createJWT };
+export { createJwtForFCM };

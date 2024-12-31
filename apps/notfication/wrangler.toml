@@ -6,12 +6,14 @@ compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
 binding = "DB"
-database_name = "notifcation"
-database_id = "43a58995-a2c8-4386-9dce-b531f23c2cc6"
-
-[site]
-bucket = "./"
-include = ["**/*.yaml"]
+database_name = "notification"
+database_id = "36dab282-7e41-4360-bf54-56e9b5496eb0"
 
 [observability.logs]
 enabled = true
+
+
+[[kv_namespaces]]
+binding = "yaml_kv"
+id = "3708808cd7f4495f81d190b683d5a32d"
+preview_id = "91164c00e55342d4884dc53cb19835fc"

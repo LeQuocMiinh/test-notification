@@ -131,3 +131,7 @@ dist
 
 
 .idea
+
+*.yaml
+
+yaml-config.ts

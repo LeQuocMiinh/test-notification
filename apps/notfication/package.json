@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"wrangler dev\"",
+    "dev": "tsc-watch --onSuccess \"wrangler dev --remote\"",
     "build": "rimraf dist && tsc && wrangler build",
+    "preload": "node dist/utils/preload-config.js",
     "deploy": "wrangler deploy",
     "dev:remote": "npx wrangler dev --remote",
     "start": "wrangler dev",
@@ -20,6 +21,7 @@
     "@yaml-js/vite": "^0.2.0",
     "apn": "^2.2.0",
     "axios": "^1.7.9",
+    "execa": "^9.5.2",
     "fcm-cloudflare-workers": "^2.0.0",
     "firebase-admin": "^13.0.2",
     "hono": "^4.5.2",

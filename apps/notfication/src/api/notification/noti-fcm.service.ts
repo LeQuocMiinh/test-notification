@@ -3,13 +3,16 @@ import { Context } from 'hono';
 import { logger } from '@packages/common';
 import { yamlContentConfig } from '../../utils/yaml-config';
 import { FcmErrorResponse, FcmTokenResponse } from '../../store/entity/fcm-responses';
-import { createJWT } from '../../utils/create-jwt';
+import { createJwtForFCM } from '../../utils/fcm-jwt';
+import { Env } from '../../main';
 
 const serviceAccount = yamlContentConfig.fcm.serviceAccount;
 const fcmHost: string = "https://fcm.googleapis.com";
 
-export async function sendToNotification(c: Context) {
+export async function sendToNotification(c: Context<{ Bindings: Env }>) {
+
     const { data, deviceToken } = await c.req.json();
+    const yml = await getDataYamlFromKv(c.env);
 
     try {
         const unregisteredTokens = await sendMulticast(data, [deviceToken]);
@@ -23,7 +26,7 @@ export async function sendToNotification(c: Context) {
         return c.json({ success: false, message: "Sending Failed" }, 400);
     }
 
-    return c.json({ success: true });
+    return c.json({ success: true, data: yml });
 }
 
 async function getAccessToken(): Promise<string> {
@@ -42,7 +45,7 @@ async function getAccessToken(): Promise<string> {
     };
 
     try {
-        const jwt = await createJWT(
+        const jwt = await createJwtForFCM(
             payload,
             serviceAccount.private_key
         );
@@ -207,3 +210,11 @@ async function sendRequest(
     }
 }
 
+async function getDataYamlFromKv(env: Env) {
+    try {
+        const rs = await env.yaml_kv.get("yaml-config");
+        return rs;
+    } catch (error) {
+        logger.info(error)
+    }
+}
