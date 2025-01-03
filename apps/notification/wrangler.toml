@@ -1,0 +1,18 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "notfication"
+main = "src/main.ts"
+compatibility_date = "2024-12-24"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "notification"
+database_id = "36dab282-7e41-4360-bf54-56e9b5496eb0"
+
+[observability.logs]
+enabled = true
+
+[[kv_namespaces]]
+binding = "yaml_kv"
+id = "2c33f3a51a3c486e8c8d1e9aa6f2f061"
+preview_id = "6912375d76e647beb29ecd47b6149377"
