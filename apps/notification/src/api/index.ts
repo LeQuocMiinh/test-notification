@@ -1,5 +1,5 @@
-export * from "../publisher/apns-publish";
-export * from "../publisher/fcm-publish";
+export * from "../publisher/apns-publisher.service";
+export * from "../publisher/fcm-publisher.service";
 export * from "./register/register.service";
 export * from "./register/unregister.service";
 export * from "./subscribe/subscribe.service";

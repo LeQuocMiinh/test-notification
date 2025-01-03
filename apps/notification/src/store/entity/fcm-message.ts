@@ -4,6 +4,10 @@ export interface FcmMessage {
         body: string;
         image?: string;
     };
+    android: {
+        ttl?: string;
+        priority?: 'normal' | 'high'
+    },
     data?: {
         [key: string]: string;
     };

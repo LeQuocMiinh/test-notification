@@ -4,7 +4,7 @@ export interface SubscribeRegisterDataInterface {
     deviceId: string;
     appId: string;
     voipToken: string;
-    platform: number;
+    platform: 'ios' | 'android';
     status: string | null;
     geocode: string;
     updateTimeLow: number;

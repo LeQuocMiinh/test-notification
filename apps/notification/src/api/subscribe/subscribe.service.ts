@@ -12,29 +12,13 @@ export async function subcribe(c: Context<{ Bindings: Env }>) {
             return c.json({ status: false, message: JSON.parse(validData.message) });
         }
 
-        const existingSubscription = await c.env.DB.prepare(
-            "SELECT * FROM subscribe WHERE channelId = ?"
+        await c.env.DB.prepare(
+            "INSERT INTO subscribe (channelId, deviceToken) VALUES (?, ?)"
         )
-            .bind(validData.channelId)
-            .first();
+            .bind(validData.channelId, validData.deviceToken)
+            .run();
 
-        if (existingSubscription) {
-            await c.env.DB.prepare(
-                "UPDATE subscribe SET deviceToken = ? WHERE channelId = ?"
-            )
-                .bind(validData.deviceToken, validData.channelId)
-                .run();
-
-            return c.json({ success: true, message: "Subscription updated successfully." });
-        } else {
-            await c.env.DB.prepare(
-                "INSERT INTO subscribe (channelId, deviceToken) VALUES (?, ?)"
-            )
-                .bind(validData.channelId, validData.deviceToken)
-                .run();
-
-            return c.json({ success: true, message: "Subscription added successfully." });
-        }
+        return c.json({ success: true, message: "Subscription added successfully." });
     } catch (error: any) {
         return c.json({ success: false, error: error.message }, 500);
     }

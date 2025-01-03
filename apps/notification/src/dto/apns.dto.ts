@@ -1,18 +1,24 @@
 import { z } from "zod";
 
-const ApnsDtoSchema = z.object({
-    data: z.unknown(),
-    channelId: z.string().min(2, { message: "channelId is required" }),
-    isVoip: z.boolean(),
-    title: z.string().optional(),
-    body: z.string().optional(),
-    category: z.string().optional(),
-    threadId: z.string().optional(),
-    badge: z.number().int().nonnegative().optional(),
-    args: z.array(z.string()).optional(),
-    collapseId: z.string().optional(),
-    priority: z.number().int().default(10),
+export const ApnsDtoSchema = z.object({
+    channelId: z.string(),
+    title: z.string(),
+    body: z.string(),
+    data: z.record(z.any()).optional(),
+    apns: z
+        .object({
+            isVoip: z.boolean().optional(),
+            priority: z.number().optional(),
+            category: z.string().optional(),
+            threadId: z.string().optional(),
+            badge: z.number().optional(),
+            collapseId: z.string().optional(),
+            args: z.array(z.string()).optional(),
+        })
+        .optional(),
 });
+
+export type ApnsDtoSchemaType = z.infer<typeof ApnsDtoSchema>;
 
 export async function ApnsDtoSchemaHandler(data: unknown) {
     try {
