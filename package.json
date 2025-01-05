@@ -13,9 +13,11 @@
     "build:redis-connector": "pnpm run redis-connector build",
     "build:mongodb-connector": "pnpm run mongodb-connector build",
     "build:common": "pnpm run common build",
-    "example": "pnpm --filter @apps/example",
-    "dev:example": "pnpm run example dev",
-    "packages:build": "pnpm run build:common && pnpm run build:mongodb-connector && pnpm run build:redis-connector && pnpm run build:elastic-search"
+    "notification": "pnpm --filter @apps/notification",
+    "build:notification": "pnpm run notification build",
+    "preload:notification": "pnpm run notification preload",
+    "dev:notification": "pnpm run notification dev",
+    "packages:build": "pnpm run build:common && pnpm run build:mongodb-connector && pnpm run build:redis-connector && pnpm run build:elastic-search && pnpm run build:notification"
   },
   "keywords": [],
   "author": "",
