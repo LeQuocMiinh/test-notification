@@ -1,14 +1,15 @@
 import { z } from "zod";
 
 export const FcmDtoSchema = z.object({
-    channelId: z.string().nonempty("channelId is required"),
-    data: z.record(z.string(), z.string()),
-    notification: z
+    channelId: z.string(),
+    title: z.string(),
+    body: z.string(),
+    data: z.record(z.any()).optional(),
+    android: z
         .object({
-            title: z.string().optional(),
-            body: z.string().optional(),
+            ttl: z.string().optional(),
+            priority: z.enum(['high', 'normal']).optional(),
         })
-        .optional(),
 });
 
 export type FcmDtoInterface = z.infer<typeof FcmDtoSchema>;

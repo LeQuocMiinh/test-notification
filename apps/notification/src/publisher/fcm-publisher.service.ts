@@ -1,9 +1,9 @@
 import { logger } from '@packages/common';
 import { FcmTokenResponse } from '../store/entity/fcm-responses';
 import { createJwtForFCM } from '../utils/fcm-jwt';
-import { FcmMessage } from '../store/entity/fcm-message';
-import { FcmDtoSchemaHandler } from '../dto/fcm.dto';
+import { FcmDtoSchemaHandler } from '../dto';
 import { FcmNotificationInterface } from '../store/entity/combined-notification';
+import { FcmMessage } from 'src/store/entity/fcm-message';
 
 let serviceAccount: any;
 const fcmHost: string = "https://fcm.googleapis.com";
@@ -16,13 +16,12 @@ export async function notificationFcm(data: FcmNotificationInterface, deviceToke
         if (validData instanceof Error) {
             throw new Error(validData.message);
         }
-        const { channelId, ...dataHandler } = data;
-        const unregisteredTokens = await sendMulticast(dataHandler, deviceToken);
+        const unregisteredTokens = await sendMulticast(validData, deviceToken);
 
         if (unregisteredTokens.length > 0) {
             logger.info("Unregistered device token(s): ", unregisteredTokens.join(", "));
         }
-        return { status: true, message: "Sent notification sucessfully" };
+        return { success: true };
 
     } catch (error: any) {
         throw new Error(error.message);
@@ -101,7 +100,6 @@ async function sendMulticast(message: FcmNotificationInterface, tokens: string[]
     }
 }
 
-
 async function sendRequest(
     message: FcmNotificationInterface,
     deviceToken: string,
@@ -118,8 +116,17 @@ async function sendRequest(
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json"
     };
-    const clonedMessage = {
-        ...message,
+
+    const fcmMessage: FcmMessage = {
+        notification: {
+            title: message.title,
+            body: message.body,
+        },
+        android: {
+            ttl: message.android?.ttl || '',
+            priority: message.android?.priority || "normal",
+        },
+        data: message.data,
         token: deviceToken,
     };
 
@@ -127,7 +134,7 @@ async function sendRequest(
         const response = await fetch(url, {
             method: "POST",
             headers,
-            body: JSON.stringify({ message: clonedMessage }),
+            body: JSON.stringify({ message: fcmMessage }),
         });
 
         if (!response.ok) {

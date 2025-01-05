@@ -9,7 +9,7 @@ export async function unSubscribe(c: Context<{ Bindings: Env }>) {
         const validData = await UnSubscribeDtoSchemaHandler(payload);
 
         if (validData instanceof Error) {
-            return c.json({ status: false, error: JSON.parse(validData.message) });
+            return c.json({ success: false, error: JSON.parse(validData.message) });
         }
 
         if (!Array.isArray(validData.channelIds) || validData.channelIds.length === 0) {
@@ -21,7 +21,7 @@ export async function unSubscribe(c: Context<{ Bindings: Env }>) {
 
         await c.env.DB.prepare(query).bind(...validData.channelIds).run();
 
-        return c.json({ success: true, message: "UnSubscriptions successfully." });
+        return c.json({ success: true, message: "Unsubscribe successfully." });
     } catch (error: any) {
         return c.json({ success: false, error: error.message }, 500);
     }

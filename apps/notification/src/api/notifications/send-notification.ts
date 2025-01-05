@@ -3,8 +3,8 @@ import { notificationApns } from "../../publisher/apns-publisher.service";
 import { Env } from "../../store/interface/env";
 import { getDataByChannelId } from "../../sql";
 import { getYamlFromKVStorage } from "../../store/yaml/get-yaml";
-import { notificationFcm } from "src/publisher/fcm-publisher.service";
-import { CombindedNotificationInterface } from "src/store/entity/combined-notification";
+import { notificationFcm } from "../../publisher/fcm-publisher.service";
+import { CombindedNotificationInterface } from "../../store/entity/combined-notification";
 
 export async function sendNotifications(c: Context<{ Bindings: Env }>) {
     try {
@@ -14,14 +14,15 @@ export async function sendNotifications(c: Context<{ Bindings: Env }>) {
         const queriesSql = await getDataByChannelId(c.env, dataConfigured.channelId);
 
         if (queriesSql instanceof Error) {
-            return c.json({ status: false, error: queriesSql.message });
+            return c.json({ success: false, error: queriesSql.message });
         }
 
         if (queriesSql.length === 0) {
-            return c.json({ status: false, error: "Queried result is empty" }, 400);
+            return c.json({ success: false, error: "Queried result is empty" }, 400);
         }
+
         let deviceTokenAndroid: string[] = [];
-        const results = await Promise.all(
+        await Promise.all(
             queriesSql.map(async (query) => {
                 if (query.platform === 'ios') {
                     const { android, ...dataHandler } = dataConfigured;
@@ -31,12 +32,14 @@ export async function sendNotifications(c: Context<{ Bindings: Env }>) {
                 if (query.platform === 'android') {
                     deviceTokenAndroid.push(query.deviceToken);
                 }
+            }));
 
-            }))
-        return c.json({ status: true, results: results.filter(e => e != null) });
+        const { apns, ...dataHandler } = dataConfigured;
+        await notificationFcm(dataHandler, deviceTokenAndroid, yamlConfig);
 
+        return c.json({ success: true, message: "Sent notification to devices sucessfully" });
     } catch (error: any) {
-        return c.json({ status: false, error: `Error sending notifications: ${error.message}` }, 500);
+        return c.json({ success: false, error: `Error sending notifications: ${error.message}` }, 500);
     }
 }
 

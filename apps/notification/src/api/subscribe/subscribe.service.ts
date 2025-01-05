@@ -9,7 +9,7 @@ export async function subcribe(c: Context<{ Bindings: Env }>) {
         const validData = await SubscribeDtoSchemaHandler(payload);
 
         if (validData instanceof Error) {
-            return c.json({ status: false, message: JSON.parse(validData.message) });
+            return c.json({ success: false, message: JSON.parse(validData.message) });
         }
 
         await c.env.DB.prepare(
@@ -18,7 +18,7 @@ export async function subcribe(c: Context<{ Bindings: Env }>) {
             .bind(validData.channelId, validData.deviceToken)
             .run();
 
-        return c.json({ success: true, message: "Subscription added successfully." });
+        return c.json({ success: true, message: "Subscribe added successfully." });
     } catch (error: any) {
         return c.json({ success: false, error: error.message }, 500);
     }

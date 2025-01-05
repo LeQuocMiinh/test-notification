@@ -8,5 +8,5 @@ export function routes(app: IHonoEnv) {
     app.post('/register', register);
     app.post('/unregister', unRegister)
     app.post('/subscribe', subcribe);
-    app.post('/unsubscribe', unSubscribe)
+    app.post('/unsubscribe', unSubscribe);
 }

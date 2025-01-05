@@ -1,3 +1,4 @@
+
 CREATE TABLE register (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     deviceId TEXT NOT NULL,
@@ -7,9 +8,9 @@ CREATE TABLE register (
     platform INTEGER NOT NULL,
     status TEXT,
     geocode TEXT NOT NULL,
-    updateTimeLow INTEGER NOT NULL,
-    updateTimeHigh INTEGER NOT NULL,
-    updateTimeUnsigned BOOLEAN NOT NULL
+    updateTimeLow INTEGER,
+    updateTimeHigh INTEGER,
+    updateTimeUnsigned BOOLEAN
 );
 
 CREATE TABLE subscribe (
