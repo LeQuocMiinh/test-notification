@@ -11,4 +11,5 @@ export interface FcmMessage {
     data?: {
         [key: string]: string;
     };
+    token: string;
 }

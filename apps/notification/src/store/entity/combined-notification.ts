@@ -11,17 +11,12 @@ export interface CombindedNotificationInterface {
         badge?: number;
         collapseId?: string;
     };
-    android?: {
+    android: {
         priority?: 'high' | 'normal';
-        notification?: {
-            title?: string;
-            body?: string;
-        };
     };
 }
 
 export interface ApnsNotificationInterface {
-    channelId: string;
     title: string;
     body: string;
     data?: Record<string, any>;
@@ -37,16 +32,12 @@ export interface ApnsNotificationInterface {
 }
 
 export interface FcmNotificationInterface {
-    channelId: string;
     title: string;
     body: string;
     data?: Record<string, any>;
     android?: {
+        ttl?: string,
         priority?: 'high' | 'normal';
-        notification?: {
-            title?: string;
-            body?: string;
-        };
     };
 }
 

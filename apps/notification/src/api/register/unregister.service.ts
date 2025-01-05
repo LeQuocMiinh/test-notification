@@ -9,7 +9,7 @@ export async function unRegister(c: Context<{ Bindings: Env }>) {
         const validData = await UnRegisterDtoSchemaHandler(payload);
 
         if (validData instanceof Error) {
-            return c.json({ status: false, error: JSON.parse(validData.message) });
+            return c.json({ success: false, error: JSON.parse(validData.message) });
         }
 
         if (!Array.isArray(validData.deviceIds) || validData.deviceIds.length === 0) {
@@ -20,8 +20,8 @@ export async function unRegister(c: Context<{ Bindings: Env }>) {
         const query = `DELETE FROM register WHERE deviceId IN (${placeholders})`;
         await c.env.DB.prepare(query).bind(...validData.deviceIds).run();
 
-        return c.json({ success: true, message: "UnRegister successfully." });
+        return c.json({ success: true, message: "Unregister successfully." });
     } catch (error: any) {
-        return c.json({ status: false, error: error.message })
+        return c.json({ success: false, error: error.message })
     }
 }

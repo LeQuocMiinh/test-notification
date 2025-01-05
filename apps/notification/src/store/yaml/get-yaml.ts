@@ -2,7 +2,6 @@ import { Env } from "../interface/env";
 
 export async function getYamlFromKVStorage(env: Env): Promise<any> {
     try {
-
         const yamlContent = await env.yaml_kv.get("yaml-config");
 
         if (!yamlContent) {
@@ -10,7 +9,6 @@ export async function getYamlFromKVStorage(env: Env): Promise<any> {
         }
 
         return JSON.parse(yamlContent);
-
     } catch (error: any) {
         return new Error(error.message);
     }

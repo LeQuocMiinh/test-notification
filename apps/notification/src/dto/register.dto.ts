@@ -8,10 +8,12 @@ const RegisterDtoSchema = z.object({
     platform: z.enum(["ios", "android", "web"]),
     status: z.boolean(),
     geocode: z.string().min(2, { message: "geocode is required" }),
-    updateTimeLow: z.string(),
-    updateTimeHigh: z.string(),
-    updateTimeUnsigned: z.string()
+    updateTimeLow: z.string().optional(),
+    updateTimeHigh: z.string().optional(),
+    updateTimeUnsigned: z.string().optional()
 });
+
+export type RegisterDtoInterface = z.infer<typeof RegisterDtoSchema>
 
 export async function RegisterDtoSchemaHandler(data: unknown) {
     try {
